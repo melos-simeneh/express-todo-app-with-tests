@@ -1,13 +1,99 @@
 config:
-  target: 'http://localhost:3000'
+  target: 'http://localhost:3000'  # Set your app's URL here
   phases:
-    - duration: 60
-      arrivalRate: 5
+    - duration: 60            # Phase 1: 60 seconds
+      arrivalRate: 5          # 5 requests per second for the first 60 seconds
+      name: "Initial Load"    # Name for this phase
+    - duration: 120           # Phase 2: 120 seconds
+      arrivalRate: 10         # 10 requests per second for the next 120 seconds
+      name: "Increased Load"  # Name for this phase
+    - duration: 180           # Phase 3: 180 seconds
+      arrivalRate: 15         # Gradually ramping up to 15 requests per second
+      name: "Peak Load"       # Name for this phase
+
 scenarios:
-  - flow:
+  - name: "Basic CRUD Operations"
+    flow:
+      # Step 1: Create a new todo
       - post:
           url: '/api/todos'
           json:
             title: 'Load Test Todo'
+            completed: false
+      - think: 1  # Adds a slight delay before the next request to simulate real user behavior
+      # Step 2: Get the list of all todos
       - get:
           url: '/api/todos'
+      - think: 1
+      # Step 3: Fetch the specific todo created
+      - get:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 4: Update the created todo
+      - put:
+          url: '/api/todos/{{todoId}}'
+          json:
+            title: 'Updated Load Test Todo'
+            completed: true
+      - think: 1
+      # Step 5: Verify the updated todo
+      - get:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 6: Delete the todo
+      - delete:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 7: Verify that the todo is deleted
+      - get:
+          url: '/api/todos/{{todoId}}'
+      
+  - name: "Bulk Testing Multiple Todos"
+    flow:
+      # Step 1: Create multiple todos for load testing
+      - post:
+          url: '/api/todos'
+          json:
+            title: 'Bulk Load Test Todo 1'
+            completed: false
+      - think: 1
+      - post:
+          url: '/api/todos'
+          json:
+            title: 'Bulk Load Test Todo 2'
+            completed: true
+      - think: 1
+      # Step 2: Fetch all todos
+      - get:
+          url: '/api/todos'
+      - think: 1
+      # Step 3: Fetch a specific todo by ID
+      - get:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 4: Update the first todo
+      - put:
+          url: '/api/todos/{{todoId}}'
+          json:
+            title: 'Updated Bulk Load Test Todo 1'
+            completed: true
+      - think: 1
+      # Step 5: Verify the updated todo
+      - get:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 6: Delete the first todo
+      - delete:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 7: Verify that the todo is deleted
+      - get:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 8: Delete the second todo
+      - delete:
+          url: '/api/todos/{{todoId}}'
+      - think: 1
+      # Step 9: Verify that the second todo is deleted
+      - get:
+          url: '/api/todos/{{todoId}}'
