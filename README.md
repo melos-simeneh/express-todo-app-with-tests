@@ -68,6 +68,7 @@ npm run test
 This command runs Jest tests and outputs the results to the terminal. It's faster when you only need to verify functionality.
 
 **Sample Output**:
+
 ![Test Output](./test_ouput.png)
 
 ### Run Tests Coverage
@@ -79,6 +80,7 @@ npm run test:cov
 This command runs Jest tests and generates a coverage report. It will output the test results and coverage percentage, helping you track the coverage. Your goal is to achieve **100%** code coverage.
 
 **Sample Output**:
+
 ![Coverage Test Output](./coverage_test_ouput.png)
 
 ### Load Testing with Artillery
